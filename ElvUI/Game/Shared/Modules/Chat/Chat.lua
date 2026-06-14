@@ -179,6 +179,12 @@ local historyTypes = { -- most of these events are set in FindURL_Events, this i
 	CHAT_MSG_EMOTE			= 'EMOTE' -- this never worked, check it sometime
 }
 
+local ExcludeSecureCmd = { -- Blizzard forgot to add into IsSecureCmd
+	['/outfit'] = true, -- transmog swap
+	['/m'] = true,		-- macro window
+	['/macro'] = true	-- macro window
+} -- these break something in combat if used by the history chat
+
 do
 	local accessIndex = 1
 	local accessInfo = {}	-- keyed by token
@@ -2183,6 +2189,7 @@ function CH:MessageFormatter(frame, info, chatType, chatGroup, chatTarget, chann
 
 	local header, body = _G['CHAT_'..chatType..'_GET']
 	local sender = (not bossMonster and playerLink) or arg2
+	local specialType = bossMonster or (chatType == 'PET_BATTLE_INFO' or chatType == 'PET_BATTLE_COMBAT_LOG')
 	if usingDifferentLanguage then
 		body = format(header..'[%s] %s', pflag..sender, arg3, message) -- arg3 is language
 	elseif chatType == 'GUILD_ITEM_LOOTED' then
@@ -2190,18 +2197,17 @@ function CH:MessageFormatter(frame, info, chatType, chatGroup, chatTarget, chann
 	elseif chatType == 'TEXT_EMOTE' then
 		local classLink = realm and playerLink and not isProtected and (info.colorNameByClass and gsub(playerLink, '(|h|c.-)|r|h$','%1-'..realm..'|r|h') or gsub(playerLink, '(|h.-)|h$','%1-'..realm..'|h'))
 		body = (classLink and gsub(message, arg2..'%-'..realm, pflag..classLink, 1)) or ((E:NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
-	elseif bossMonster then -- may contain special formatting
+	elseif specialType then -- contains special formatting
 		body = format(header..message, pflag..sender)
 	else -- ignore special characters from players
 		body = format(header..'%s', pflag..sender, message)
 	end
 
-	-- Add Channel
-	if channelLength > 0 then
+	if not specialType and (channelLength > 0) then -- Add Channel
 		body = '|Hchannel:channel:'..arg8..'|h['..ResolvePrefixedChannelName(arg4)..']|h '..body
 	end
 
-	if not isProtected and (chatType ~= 'EMOTE' and chatType ~= 'TEXT_EMOTE') and (CH.db.shortChannels or CH.db.hideChannels) then
+	if not specialType and not isProtected and (chatType ~= 'EMOTE' and chatType ~= 'TEXT_EMOTE') and (CH.db.shortChannels or CH.db.hideChannels) then
 		body = CH:HandleShortChannels(body, CH.db.hideChannels)
 	end
 
@@ -2870,7 +2876,7 @@ function CH:ChatEdit_AddHistory(editbox, line)
 	if not msg or strlen(msg) <= 0 then return end
 
 	local cmd = strmatch(msg, '^/%w+')
-	if cmd and IsSecureCmd(cmd) then return end -- block secure commands
+	if cmd and (IsSecureCmd(cmd) or ExcludeSecureCmd[cmd]) then return end -- block secure commands
 
 	for index, text in pairs(lines) do
 		if text == msg then
@@ -3988,6 +3994,18 @@ do
 	end
 end
 
+function CH:PetBattleFrame_Display()
+	_G.RemoveFrameLock('PETBATTLES')
+
+	-- we want to display the pet battle tab now since it is faded initially without mousing over
+	for _, frameName in ipairs(_G.CHAT_FRAMES) do
+		local chat = _G[frameName]
+		if (chat and chat.isTemporary) and (not chat.hasBeenFaded and chat.chatType == 'PET_BATTLE_COMBAT_LOG') and not chat:IsShown() then
+			_G.FCF_FadeInChatFrame(chat)
+		end
+	end
+end
+
 function CH:Initialize()
 	if ElvCharacterDB.ChatHistory then ElvCharacterDB.ChatHistory = nil end --Depreciated
 	if ElvCharacterDB.ChatLog then ElvCharacterDB.ChatLog = nil end --Depreciated
@@ -4075,6 +4093,10 @@ function CH:Initialize()
 		end
 	else
 		CH:RegisterEvent('PLAYER_ENTERING_WORLD', 'ResnapDock')
+	end
+
+	if E.Mists then -- allow chat to stay shown
+		hooksecurefunc('PetBattleFrame_Display', CH.PetBattleFrame_Display)
 	end
 
 	if _G.WIM then

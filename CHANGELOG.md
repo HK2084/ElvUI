@@ -1,3 +1,32 @@
+### Version 15.16 [ June 5th 2026 ]
+*   **Mist**
+    *   Transmog skin updated.
+    *   CatalogShop skin updated.
+    *   Actionbar autocast glow adjusted.
+    *   Actionbar flyouts fixed.
+    *   Spellbook flyout arrow fixed.
+    *   Nameplates having the wrong scale value.
+    *   Nameplate clickable range sliders added to options.
+    *   Bag buttons disappearing.
+    *   Pet battle chat works properly now (and shows up finally).
+    *   Font option overrides added for Quest fonts and fixed the Quest Text display getting stuck.
+*   **General**
+    *   Updated LibActionButton. (Thanks Nevcairiel)
+    *   Nameplate layers adjusted so the Castbar will be over health.
+    *   Reset Tutorial button in settings wasn't skinned properly.
+
+### Version 15.15 [ June 2nd 2026 ]
+*   Era: Nameplate highlight showing up weird.
+*   Inspect Itemlevel moved to top left to avoid overlap.
+*   Harronir race accounted for in the tooltip.
+*   Private Auras can be tested when using Display Frames or Show Auras.
+*   Private Auras sometimes on wrong frame (Thanks DreadMesh for initial help here, the recent change is still experimental).
+*   Haste Datatext error when mouseover during combat.
+*   Warrior Actionbar default paging adjusted.
+*   Skins: Macro frame was erroring during combat when editing or creating a new macro.
+*   Chat: Exclude some commands from being saved to editbox (outfit, m, and macro) as they can cause errors during combat from history.
+*   Mists: Initial support for Editmode in the new update.
+
 ### Version 15.14 [ May 18th 2026 ]
 *   Unitframes: Additional class power not showing up.
 *   Datatext volume error when shift clicking.
