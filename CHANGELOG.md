@@ -1,3 +1,28 @@
+### Version 15.21 [ August 11th 2026 ]
+*   Aurabars for focus unitframe not updating.
+*   Removed Display Player option for Raid Frames.
+*   Chat: Discord Info table not sending to message formatter correctly.
+*   33.3333% secrets secreted by secret technology.
+*   Castbar: Harsh Discipline Penance ticks are secret ticks.
+*   Nameplate semi-locked to Player filter temporarily.  Checkboxes will not work; only Max Duration, Allow, and Block list can be adjusted for now.
+*   Aura Indicators not setting properly and filters from older versions causing an error.
+*   Debuff Highlight was layered on top of names and not using the correct colors also, Buff highlight is not setup yet.
+*   Bags not displaying gold text at login.
+
+### Version 15.20 [ August 11th 2026 ]
+*   Hotfix: Health error with oUF on Classic.
+
+### Version 15.19 [ August 11th 2026 ]
+*   **Midnight**
+    *   All aura systems reworked (some settings not finished).
+*   **General**
+    *   Profile: Export strings now use Blizzards encoding API.  Please check discord for how to upgrade the old strings.
+    *   Auras: Top Aura offhand enchants weren't showing on login.
+    *   Cooldown: Color and Low Threshold (decimals) options readded.
+    *   Cooldown: Seconds threshold to display in minutes color until a given time.
+    *   Cooldown: Overrides added to Actionbars, Unitframes, and Nameplates.  This allows altered settings per-frame or bar.
+    *   Chat: History displaying wrong battlenet friend from previous session message.
+
 ### Version 15.18 [ July 7th 2026 ]
 *   Nameplate issue involving GetNamePlateForUnit.
 *   Skinned edit mode settings frame dropdowns. (Thanks Daenarys)
