@@ -57,12 +57,13 @@ local GetWatchedFactionInfo = GetWatchedFactionInfo
 local GetWatchedFactionData = C_Reputation.GetWatchedFactionData
 
 local IsPlayerAtEffectiveMaxLevel = IsPlayerAtEffectiveMaxLevel
+local UnregisterInternalEvent = GameEvent and GameEvent.UnregisterInternalEvent
 local GameRulesUtil_IsPlayerAtEffectiveMaxLevel = GameRulesUtil and GameRulesUtil.IsPlayerAtEffectiveMaxLevel
 local GameRulesUtil_GetEffectiveMaxLevelForPlayer = GameRulesUtil and GameRulesUtil.GetEffectiveMaxLevelForPlayer
 local GetAddOnRestrictionState = C_RestrictedActions and C_RestrictedActions.GetAddOnRestrictionState
-local CreateDuration = C_DurationUtil and C_DurationUtil.CreateDuration
-local CreateCurve = C_CurveUtil and C_CurveUtil.CreateCurve
-local CreateColorCurve = C_CurveUtil and C_CurveUtil.CreateColorCurve
+local CreateDuration = C_DurationUtil.CreateDuration
+local CreateCurve = C_CurveUtil.CreateCurve
+local CreateColorCurve = C_CurveUtil.CreateColorCurve
 local GetColorDataForItemQuality = ColorManager and ColorManager.GetColorDataForItemQuality
 local GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
 
@@ -715,7 +716,7 @@ end
 function E:UpdateDispelColor(debuffType, r, g, b, a)
 	local color = DebuffColors[debuffType]
 	if color then
-		color.r, color.g, color.b, color.a = r, g, b, a
+		color:SetRGBA(r, g, b, a)
 	end
 
 	local db = E.db.general.debuffColors[debuffType]
@@ -731,7 +732,11 @@ function E:UpdateDispelColors()
 		if color then
 			E:UpdateClassColor(db)
 
-			color.r, color.g, color.b = db.r, db.g, db.b
+			color:SetRGBA(db.r, db.g, db.b, db.a)
+
+			if E.Retail then
+				E.AuraDispel.customDispelColorMap[debuffType] = color
+			end
 		end
 	end
 end
@@ -1454,8 +1459,20 @@ function E:IsPvPMatchRestricted()
 	return GetCVarBool('addonPvPMatchRestrictionsForced') or E:IsInRestrictionState('PvPMatch')
 end
 
+function E:IsCombatRestricted()
+	return GetCVarBool('addonCombatRestrictionsForced') or E:IsInRestrictionState('Combat')
+end
+
 function E:IsChatRestricted()
 	return GetCVarBool('addonChatRestrictionsForced') or (E:IsInRestrictionState('ChallengeMode') or E:IsInRestrictionState('Encounter'))
+end
+
+function E:UnregisterGameEvent(event)
+	if UnregisterInternalEvent then
+		UnregisterInternalEvent(event)
+	else
+		UIParent:UnregisterEvent(event)
+	end
 end
 
 function E:LoadAPI()
