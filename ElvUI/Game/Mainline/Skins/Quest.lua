@@ -9,7 +9,6 @@ local GetMoney = GetMoney
 local GetQuestID = GetQuestID
 local CreateFrame = CreateFrame
 local GetNumQuestLeaderBoards = GetNumQuestLeaderBoards
-local GetQuestBackgroundMaterial = GetQuestBackgroundMaterial
 local GetQuestLogLeaderBoard = GetQuestLogLeaderBoard
 local hooksecurefunc = hooksecurefunc
 
@@ -88,21 +87,6 @@ local function HandleReward(frame)
 		frame.CircleBackgroundGlow:SetAlpha(0)
 	end
 end
-
-local function NewSealStyle()
-	local theme = _G.QuestInfoSealFrame.theme
-	return theme and theme.background
-end
-
-function S:QuestInfo_StyleScrollFrame(scrollFrame)
-	scrollFrame.Center:SetShown(GetQuestBackgroundMaterial() == 'Parchment' or not NewSealStyle())
-end
-
-S.QuestInfo_StyleScrollFrames = {
-	[_G.QuestDetailScrollChildFrame] = _G.QuestDetailScrollFrame,
-	[_G.QuestRewardScrollChildFrame] = _G.QuestRewardScrollFrame,
-	[_G.QuestLogPopupDetailFrame.ScrollFrame.ScrollChild] = _G.QuestLogPopupDetailFrameScrollFrame
-}
 
 -- Quest objective text color
 local function Quest_GetQuestID()
@@ -258,11 +242,6 @@ function S:QuestInfo_Display(parentFrame) -- self is template, not S
 		_G.QuestInfoQuestType:SetShadowColor(0, 0, 0, 0)
 		_G.QuestInfoRewardsFrame.ItemChooseText:SetShadowColor(0, 0, 0, 0)
 		_G.QuestInfoRewardsFrame.ItemReceiveText:SetShadowColor(0, 0, 0, 0)
-
-		local scrollFrame = S.QuestInfo_StyleScrollFrames[parentFrame]
-		if scrollFrame then
-			S:QuestInfo_StyleScrollFrame(scrollFrame)
-		end
 	end
 end
 
@@ -369,16 +348,6 @@ function S:BlizzardQuestFrames()
 		_G.QuestRewardScrollFrame:SetTemplate('NoBackdrop')
 		_G.QuestLogPopupDetailFrameScrollFrame:SetTemplate('NoBackdrop')
 
-		_G.QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
-		_G.QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
-		_G.QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
-		_G.QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
-
-		_G.QuestFrameDetailPanel.Bg:SetAlpha(0)
-		_G.QuestFrameRewardPanel.Bg:SetAlpha(0)
-		_G.QuestFrameProgressPanel.Bg:SetAlpha(0)
-		_G.QuestFrameGreetingPanel.Bg:SetAlpha(0)
-
 		_G.QuestModelScene.ModelTextFrame:StripTextures()
 		_G.QuestNPCModelText:SetTextColor(1, 1, 1)
 	else
@@ -387,9 +356,6 @@ function S:BlizzardQuestFrames()
 		_G.QuestGreetingScrollFrame:SetTemplate('Transparent')
 		_G.QuestRewardScrollFrame:SetTemplate('Transparent')
 		_G.QuestLogPopupDetailFrameScrollFrame:SetTemplate('Transparent')
-
-		S:QuestInfo_StyleScrollFrame(_G.QuestProgressScrollFrame)
-		S:QuestInfo_StyleScrollFrame(_G.QuestGreetingScrollFrame)
 
 		_G.QuestFrameDetailPanel.SealMaterialBG:SetInside(_G.QuestDetailScrollFrame)
 		_G.QuestFrameRewardPanel.SealMaterialBG:SetInside(_G.QuestRewardScrollFrame)
@@ -400,6 +366,11 @@ function S:BlizzardQuestFrames()
 		_G.QuestFrameRewardPanel.Bg:SetInside(_G.QuestRewardScrollFrame)
 		_G.QuestFrameProgressPanel.Bg:SetInside(_G.QuestProgressScrollFrame)
 		_G.QuestFrameGreetingPanel.Bg:SetInside(_G.QuestGreetingScrollFrame)
+
+		_G.QuestFrameDetailPanel.Bg:SetAlpha(1)
+		_G.QuestFrameRewardPanel.Bg:SetAlpha(1)
+		_G.QuestFrameProgressPanel.Bg:SetAlpha(1)
+		_G.QuestFrameGreetingPanel.Bg:SetAlpha(1)
 
 		_G.QuestDetailScrollFrame.Center:SetAlpha(0)
 		_G.QuestRewardScrollFrame.Center:SetAlpha(0)
