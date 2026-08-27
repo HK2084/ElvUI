@@ -259,9 +259,9 @@ end
 function E:CheckClassColor(r, g, b)
 	r, g, b = E:GrabColorPickerValues(r, g, b)
 
-	for class in next, _G.RAID_CLASS_COLORS do
-		if class ~= E.myclass then
-			local color = E:ClassColor(class, true)
+	for classToken in next, _G.RAID_CLASS_COLORS do
+		if classToken ~= E.myclass then
+			local color = E:ClassColor(classToken, true)
 			local red, green, blue = E:GrabColorPickerValues(color.r, color.g, color.b)
 			if red == r and green == g and blue == b then
 				return true
@@ -2095,7 +2095,6 @@ function E:Initialize()
 
 		if E.Retail then
 			E:Tutorials()
-			E:InitializeAuras()
 		end
 
 		if E.db.general.tagUpdateRate and (E.db.general.tagUpdateRate ~= P.general.tagUpdateRate) then
