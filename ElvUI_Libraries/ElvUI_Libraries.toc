@@ -1,5 +1,5 @@
 ## Interface: 11509, 16001, 20506, 38002, 50504, 120100, 120105
-## Version: v16.00
+## Version: v16.01
 ## Author: Elv, Simpy
 
 ## OptionalDeps: LibHealComm-4.0 [AllowLoadGameType classic]
