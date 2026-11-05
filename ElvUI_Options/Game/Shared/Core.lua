@@ -633,10 +633,10 @@ do -- Module Copy
 		config.args.totemBar.name = L["Totem Bar"]
 		config.args.totemBar.hidden = not E.allowTotemBar
 		config.args.extraActionButton.name = L["Boss Button"]
-		config.args.extraActionButton.hidden = not (E.Modern or E.Mists)
+		config.args.extraActionButton.hidden = not (E.Retail or E.Mists)
 		config.args.vehicleExitButton.name = L["Vehicle Exit"]
 		config.args.zoneActionButton.name = L["Zone Ability"]
-		config.args.zoneActionButton.hidden = not E.Modern
+		config.args.zoneActionButton.hidden = not E.Retail
 
 		return config
 	end
@@ -702,9 +702,9 @@ do -- Module Copy
 		config.args.cdmanager.hidden = not E.Modern
 		config.args.totemtracker.name = L["Totem Tracker"]
 		config.args.bossbutton.name = L["Boss Button"]
-		config.args.bossbutton.hidden = not (E.Modern or E.Mists)
+		config.args.bossbutton.hidden = not (E.Retail or E.Mists)
 		config.args.zonebutton.name = L["Zone Button"]
-		config.args.zonebutton.hidden = not E.Modern
+		config.args.zonebutton.hidden = not E.Retail
 
 		return config
 	end

@@ -661,7 +661,7 @@ function AB:UpdateAllBinds(event)
 	AB:UpdatePetBindings()
 	AB:UpdateStanceBindings()
 
-	if E.Modern or E.Mists then
+	if E.Retail or E.Mists then
 		AB:UpdateExtraBindings()
 	end
 
@@ -743,8 +743,11 @@ function AB:UpdateButtonSettings(specific)
 		AB:UpdatePetBindings()
 		AB:UpdateStanceBindings() -- call after AdjustMaxStanceButtons
 
-		if E.Modern or E.Mists then
+		if E.Retail or E.Mists then
 			AB:UpdateExtraBindings()
+		end
+
+		if E.Modern or E.Mists then
 			AB:UpdateFlyoutButtons()
 
 			-- handle LAB custom flyout button sizes again
@@ -1984,7 +1987,8 @@ function AB:Initialize()
 		end
 	end
 
-	if not E.private.actionbar.enable then return end
+	-- Gamepad UI uses Blizzard's crossbar and hides the other action bars
+	if not E.private.actionbar.enable or E.IsGamepadActive then return end
 	AB.Initialized = true
 
 	LAB.RegisterCallback(AB, 'OnButtonUpdate', AB.LAB_ButtonUpdate)
@@ -2066,7 +2070,7 @@ function AB:Initialize()
 		AB:ADDON_LOADED(nil, 'Blizzard_MacroUI')
 	end
 
-	if E.Modern or E.Mists then
+	if E.Retail or E.Mists then
 		AB:SetupExtraButtons()
 	end
 

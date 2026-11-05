@@ -129,8 +129,8 @@ function TT:SetCompareItems(tt, value)
 	tt.supportsItemComparison = value
 end
 
-function TT:GameTooltip_SetDefaultAnchor(tt, parent)
-	if not E.private.tooltip.enable or not TT.db.visibility or (tt:IsForbidden() or tt:GetAnchorType() ~= 'ANCHOR_NONE') then
+function TT:GameTooltip_SetDefaultAnchor(tt, parent) -- Gamepad radial passes a plain frame without GetAnchorType
+	if not E.private.tooltip.enable or not TT.db.visibility or (tt:IsForbidden() or not tt.GetAnchorType or tt:GetAnchorType() ~= 'ANCHOR_NONE') then
 		return
 	elseif (InCombatLockdown() and not TT:IsModKeyDown(TT.db.visibility.combatOverride)) or (not AB.KeyBinder.active and not TT:IsModKeyDown(TT.db.visibility.actionbars) and AB.handledbuttons[tt:GetOwner()]) then
 		TT:SetCompareItems(tt, nil)
@@ -363,7 +363,7 @@ function TT:SetUnitText(tt, unit, isPlayerUnit)
 
 			local unitPVP = UnitIsPVP(unit)
 			if E:NotSecretValue(unitPVP) and unitPVP then
-				pvpFlag = format(' (%s)', _G.PVP)
+				pvpFlag = format(' (%s)', _G.PVP_ENABLED)
 			end
 
 			if creatureClassification == 'rare' or creatureClassification == 'elite' or creatureClassification == 'rareelite' or creatureClassification == 'worldboss' then
@@ -482,8 +482,8 @@ function TT:CheckMountInfo(tt, aura)
 
 	tt:AddDoubleLine(format('%s:', _G.MOUNT), aura.name, nil, nil, nil, 1, 1, 1)
 
-	local sourceText = E.MountText[mountID]
-	local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, blanchyFix, '|n')
+	local sourceText = IsControlKeyDown() and E.MountText[mountID]
+	local mountText = sourceText and gsub(sourceText, blanchyFix, '|n')
 	if mountText then
 		local sourceModified = gsub(mountText, '|n', '\10')
 		for x in gmatch(sourceModified, '[^\10]+\10?') do

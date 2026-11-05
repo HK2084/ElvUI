@@ -40,11 +40,6 @@ local OLD_ATLAS = {
 	Options_ListExpand_Right_Expanded = 1
 }
 
-local FILL_COLORS = {
-	['common-stat-bar-blue'] = { r = 0.03, g = 0.43, b = 0.92 },
-	['common-stat-bar-green'] = { r = 0.23, g = 1, b = 0 },
-}
-
 local RESISTANCE_ICONS = { -- atlas suffix to the plain SpellSchoolIcon index
 	['UI-Character-Info-Resistance-Holy'] = SPELL_SCHOOL_ICON..2,
 	['UI-Character-Info-Resistance-Fire'] = SPELL_SCHOOL_ICON..3,
@@ -245,6 +240,7 @@ local function EquipmentDisplayButton(button, index)
 
 		button.icon:SetInside()
 		button.icon:SetTexCoords()
+		S:HandleItemButtonCrop(button)
 
 		if E.Modern then -- the classic SetItemButtonQuality always hides it
 			S:HandleIconBorder(button.IconBorder)
@@ -452,47 +448,6 @@ local function HandleCategory(frame)
 	frame.backdrop:Size(150, 18)
 end
 
--- Blizzard sets the atlas, a white tint and a vertically flipped TexCoord again on every skill init
-local function ColoredProgressBar_UpdateFill(bar)
-	local fill = bar.Fill
-	local atlas = fill:GetAtlas()
-	local color = FILL_COLORS[atlas]
-	if color then
-		fill:SetVertexColor(color.r, color.g, color.b)
-	end
-
-	fill:SetTexture(E.media.normTex)
-	fill:SetTexCoord(0, 1, 0, 1)
-end
-
-local function ColoredProgressBar_SetFillPercent(bar, percent)
-	ColoredProgressBar_UpdateFill(bar)
-
-	bar.Fill:SetShown(percent > 0)
-end
-
--- ColoredProgressBarTemplate: unnamed background, a masked Fill and Text
-local function HandleColoredProgressBar(bar)
-	bar:GetRegions():SetTexture()
-
-	bar:CreateBackdrop('Transparent')
-	bar.backdrop:Point('TOPLEFT', bar, 'LEFT', -1, 8)
-	bar.backdrop:Point('BOTTOMRIGHT', bar, 'RIGHT', 1, -8)
-
-	bar.Text:FontTemplate()
-
-	bar.Fill:ClearAllPoints()
-	bar.Fill:Point('TOPLEFT', bar.backdrop, 'TOPLEFT', E.Border, -E.Border)
-	bar.Fill:Point('BOTTOMLEFT', bar.backdrop, 'BOTTOMLEFT', E.Border, E.Border)
-	bar.Fill:RemoveMaskTexture(bar.Mask)
-
-	E:RegisterStatusBar(bar.Fill)
-
-	ColoredProgressBar_UpdateFill(bar)
-
-	hooksecurefunc(bar, 'SetFillPercent', ColoredProgressBar_SetFillPercent)
-end
-
 local function HappinessInfo_UpdateHappiness(info)
 	if not _G.CharacterStatsPanePetScrollBox:IsShown() then
 		info:Hide() -- blizzard shows it on every tab
@@ -660,7 +615,7 @@ local function HandleListEntry(child)
 
 		local bar = content.ReputationBar or content.SkillsBar
 		if bar then
-			HandleColoredProgressBar(bar)
+			S:HandleColoredProgressBar(bar)
 		end
 
 		local icon = content.CurrencyIcon
@@ -909,6 +864,7 @@ local function SkinPaperDollFrame(CharacterFrame)
 
 			S:HandleIcon(Slot.icon)
 			Slot.icon:SetInside()
+			S:HandleItemButtonCrop(Slot)
 
 			if Slot.ignoreTexture then -- the Forever ammo slot has none
 				Slot.ignoreTexture:SetTexture([[Interface\PaperDollInfoFrame\UI-GearManager-LeaveItem-Transparent]])
@@ -1059,7 +1015,7 @@ local function SkinPaperDollFrame(CharacterFrame)
 
 	--Re-add the overlay texture which was removed right above via StripTextures
 	local CharacterModelScene = _G.CharacterModelScene
-	if E.Forever then -- Forever overlay is an unnamed atlas without the per race alpha
+	if E.Forever then
 		CharacterModelScene.BackgroundOverlay:SetColorTexture(0, 0, 0, 0.5)
 
 		-- blizzard fills the whole pane behind the slots, box it in between the slot columns like retail
@@ -1092,7 +1048,7 @@ local function SkinPaperDollFrame(CharacterFrame)
 	S:HandleModelSceneControlButtons(CharacterModelScene.ControlFrame)
 
 	if E.Forever then
-		HandleColoredProgressBar(_G.PetPaperDollFrameExpBar) -- lives in the model scene
+		S:HandleColoredProgressBar(_G.PetPaperDollFrameExpBar) -- lives in the model scene
 	end
 
 	--Titles
@@ -1251,7 +1207,7 @@ local function SkinReputationFrame()
 		local DetailFrame = ReputationFrame.ReputationDetailFrame
 		if E.Forever then -- Forever side pane with a standing bar
 			HandleSidePane(DetailFrame)
-			HandleColoredProgressBar(DetailFrame.StandingBar)
+			S:HandleColoredProgressBar(DetailFrame.StandingBar)
 		else
 			DetailFrame:StripTextures()
 			DetailFrame:SetTemplate('Transparent')
@@ -1422,7 +1378,7 @@ local function SkinSkillFrame()
 		local SkillsFrame = _G.SkillsFrame
 		HandleListFrame(SkillsFrame)
 		HandleSidePane(SkillsFrame.SkillDetailFrame)
-		HandleColoredProgressBar(SkillsFrame.SkillDetailFrame.RankBar)
+		S:HandleColoredProgressBar(SkillsFrame.SkillDetailFrame.RankBar)
 	elseif not (E.Modern or E.Mists) then -- mists has no skill tab
 		_G.SkillFrame:StripTextures()
 
@@ -1445,7 +1401,7 @@ local function SkinSkillFrame()
 			E:RegisterStatusBar(bar)
 
 			border:StripTextures()
-			background:SetTexture(nil)
+			background:SetTexture()
 
 			label:GetNormalTexture():Size(14)
 			label:SetHighlightTexture(E.ClearTexture)

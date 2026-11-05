@@ -733,7 +733,7 @@ do
 	local ADDONS = {
 		ActionBar = {
 			info = {
-				enabled = function() return E.private.actionbar.enable end,
+				enabled = function() return E.private.actionbar.enable and not E.IsGamepadActive end,
 				accept = function() E.private.actionbar.enable = false; ReloadUI() end,
 				name = 'ElvUI ActionBars'
 			},
@@ -1684,7 +1684,7 @@ function E:UpdateActionBars()
 	ActionBars:UpdateButtonSettings()
 	ActionBars:UpdateMicroButtons()
 
-	if E.Modern or E.Mists then
+	if E.Retail or E.Mists then
 		ActionBars:UpdateExtraButtons()
 	end
 end

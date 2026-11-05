@@ -908,8 +908,8 @@ local function GetOptionsTable_Power(hasDetatchOption, updateFunc, groupName, nu
 		config.args.generalGroup.args.displayAltPower = ACH:Toggle(L["Swap to Alt Power"], nil, 20, nil, nil, nil, nil, nil, nil, not E.Modern)
 	end
 
-	if (E.Classic or E.TBC or E.Wrath) and groupName == 'player' then
-		config.args.generalGroup.args.EnergyManaRegen = ACH:Toggle(L["Energy/Mana Regen Tick"], L["Enables the five-second-rule ticks for Mana classes and Energy ticks for Rogues and Druids."], 21, nil, nil, nil, nil, nil, nil, E.Modern)
+	if (E.Classic or E.TBC or E.Wrath or E.Forever) and E.myclass ~= 'WARRIOR' and groupName == 'player' then
+		config.args.generalGroup.args.EnergyManaRegen = ACH:Toggle(L["Energy/Mana Regen Tick"], L["Enables the five-second-rule ticks for Mana classes and Energy ticks for Rogues and Druids."], 21)
 	end
 
 	return config
@@ -1143,7 +1143,7 @@ local function GetOptionsTable_GeneralGroup(updateFunc, groupName, numUnits)
 
 		config.args.visibilityGroup = ACH:Group(L["Visibility"], nil, 100, nil, nil, function(info, value) E.db.unitframe.units[groupName][info[#info]] = value updateFunc(UF, groupName, numUnits) end)
 		config.args.visibilityGroup.args.defaults = ACH:Execute(L["Restore Defaults"], function() return P.unitframe.units[groupName].visibility end, 1, function() E.db.unitframe.units[groupName].visibility = P.unitframe.units[groupName].visibility updateFunc(UF, groupName, numUnits) end, nil, true)
-		config.args.visibilityGroup.args.showPlayer = ACH:Toggle(L["Display Player"], L["When true, the header includes the player when not in a raid."], 2, nil, nil, nil, nil, nil, nil, groupName ~= 'party')
+		config.args.visibilityGroup.args.showPlayer = ACH:Toggle(L["Display Player"], L["When true, the header includes the player when not in a raid."], 2)
 		config.args.visibilityGroup.args.visibility = ACH:Input(L["Visibility"], L["VISIBILITY_DESC"], 3, nil, 'full')
 
 		config.args.sortingGroup = ACH:Group(L["Grouping & Sorting"], nil, 300, nil, nil, function(info, value) E.db.unitframe.units[groupName][info[#info]] = value updateFunc(UF, groupName, numUnits) end)

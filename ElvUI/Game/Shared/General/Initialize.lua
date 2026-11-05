@@ -129,6 +129,10 @@ do -- Expansions
 
 	local IsEngravingEnabled = C_Engraving and C_Engraving.IsEngravingEnabled
 	E.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
+
+	local inputTypes = Enum.InputDeviceInterfaceType
+	local inputCurrent = C_InputInterfaceStyle and C_InputInterfaceStyle.GetCurrentStyle()
+	E.IsGamepadActive = inputTypes and inputTypes.Gamepad == inputCurrent
 end
 
 -- DONT USE: Deprecated
@@ -157,7 +161,7 @@ end
 function E:ParseVersionString(addon)
 	local version = GetAddOnMetadata(addon, 'Version')
 	if strfind(version, 'project%-version') then
-		return 15.26, '15.26-git', nil, true
+		return 16.00, '16.00-git', nil, true
 	else
 		local release, extra = strmatch(version, '^v?([%d.]+)(.*)')
 		return tonumber(release), release..extra, extra ~= ''
